@@ -1,45 +1,44 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
-import NewExpense from './components/NewExpense/NewExpense';
-import Expenses from './components/Expenses/Expenses';
-
-const DUMMY_EXPENSES = [
-  {
-    id: 'e1',
-    title: 'Toilet Paper',
-    amount: 94.12,
-    date: new Date(2020, 7, 14),
-  },
-  { id: 'e2', title: 'New TV', amount: 799.49, date: new Date(2021, 2, 12) },
-  {
-    id: 'e3',
-    title: 'Car Insurance',
-    amount: 294.67,
-    date: new Date(2021, 2, 28),
-  },
-  {
-    id: 'e4',
-    title: 'New Desk (Wooden)',
-    amount: 450,
-    date: new Date(2021, 5, 12),
-  },
-];
+import { findAll } from './services/films';
 
 const App = () => {
-  const [expenses, setExpenses] = useState(DUMMY_EXPENSES);
+  const [loading, setLoading] = useState(false)
+  const [films, setFilms] = useState([])
 
-  const addExpenseHandler = (expense) => {
-    console.log('im here ', expense)
-    setExpenses((prevExpenses) => {
-      return [expense, ...prevExpenses];
-    });
-  };
+  const fetchData = async () => {
+      setLoading(true)
 
+      const res = await findAll()
+
+      setFilms([...res])
+      setLoading(false)
+      console.log('response: ', res)
+  }
+
+  useEffect(() => {
+      fetchData()
+  }, [])
 
   return (
     <div>
-      <NewExpense onAddExpense={addExpenseHandler} />
-      <Expenses items={expenses} />
+      <button onClick={() => {alert('clicked')}} >HTTP</button>
+
+      <section>
+            <header>
+                <h2>Films</h2>
+            </header>
+
+            { loading && 
+                <p>loading...</p>
+            }
+
+            <ul>
+                {films.length > 0 && films.map(film => (
+                    <p key={film.id} >{film.Titre}</p>
+                ))}
+            </ul>
+        </section>
     </div>
   );
 };
